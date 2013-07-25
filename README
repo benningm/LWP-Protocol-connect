@@ -1,0 +1,25 @@
+NAME
+    LWP::Protocol::connect - Provides HTTP/CONNECT proxy support for
+    LWP::UserAgent
+
+SYNOPSIS
+      use LWP::UserAgent;
+
+      $ua = LWP::UserAgent->new(); 
+      $ua->proxy('https', 'connect://proxyhost.domain:3128/');
+
+      $ua->get('https://www.somesslsite.com');
+
+DESCRIPTION
+    The LWP::Protocol::connect module provides support for using https over
+    a proxy via the HTTP/CONNECT method.
+
+SEE ALSO
+    IO::Socket::SSL, LWP::Protocol::https
+
+COPYRIGHT
+    Copyright 2013 Markus Benning <me@w3r3wolf.de>
+
+    This library is free software; you can redistribute it and/or modify it
+    under the same terms as Perl itself.
+

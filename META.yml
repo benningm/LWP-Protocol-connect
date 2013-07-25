@@ -1,0 +1,30 @@
+---
+abstract: 'Provides HTTP/CONNECT proxy support for LWP::UserAgent'
+author:
+  - 'Markus Benning <me@w3r3wolf.de>'
+configure_requires:
+  Module::Build: 0.36
+generated_by: 'Module::Build version 0.3607'
+license: perl
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: LWP-Protocol-connect
+provides:
+  LWP::Protocol::connect:
+    file: lib/LWP/Protocol/connect.pm
+  LWP::Protocol::https::connect:
+    file: lib/LWP/Protocol/connect.pm
+    version: 6.00
+  LWP::Protocol::https::connect::Socket:
+    file: lib/LWP/Protocol/connect.pm
+  URI::connect:
+    file: lib/URI/connect.pm
+requires:
+  IO::Socket::SSL: 0
+  LWP::Protocol::https: '>=6.04'
+  Net::HTTP: 0
+  URI::http: 0
+resources:
+  license: http://dev.perl.org/licenses/
+version: 6.00
