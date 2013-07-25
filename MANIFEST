@@ -1,7 +1,0 @@
-Build.PL
-lib/LWP/Protocol/connect.pm
-lib/URI/connect.pm
-MANIFEST			This list of files
-META.yml
-README
-t/use.t
