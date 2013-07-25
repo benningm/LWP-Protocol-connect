@@ -1,4 +1,5 @@
 package LWP::Protocol::connect;
+# VERSION
 
 use LWP::Protocol::https::connect;
 use LWP::Protocol::https::connect::Socket;

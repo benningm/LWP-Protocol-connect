@@ -1,4 +1,5 @@
 package LWP::Protocol::https::connect;
+# VERSION
 
 use strict;
 use warnings;
