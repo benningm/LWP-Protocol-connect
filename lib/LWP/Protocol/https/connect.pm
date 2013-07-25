@@ -1,8 +1,9 @@
 package LWP::Protocol::https::connect;
-# VERSION
 
 use strict;
 use warnings;
+
+# VERSION
 
 require LWP::Protocol::https;
 our @ISA = qw(LWP::Protocol::https);
