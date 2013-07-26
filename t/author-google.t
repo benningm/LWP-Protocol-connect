@@ -3,7 +3,9 @@
 use strict;
 use warnings;
 
-use Test::More tests => 10;
+BEGIN { $ENV{LANG} = $ENV{LC_MESSAGES} = $ENV{LC_ALL} = "C" }
+
+use Test::More;
 use Test::Exception;
 
 use LWP::UserAgent;
@@ -20,6 +22,11 @@ lives_ok { $lwp->proxy('https', 'connect://localhost:8888/') } 'can set connect:
 my $response;
 lives_ok { $response = $lwp->get('https://www.google.com/') } 'GET https://www.google.com/';
 
+if( $response->status_line =~ /^500 Net::HTTP: connect:/ ) {
+	done_testing();
+	diag('seems like we have no connectivity. no futher tests...aborting');
+	exit 0;
+}
 ok( $response->is_success, 'successful response');
 
 # check if hostname is verified
@@ -38,4 +45,5 @@ lives_ok { $response = $lwp->get('https://www.google.com/') } 'GET https://www.g
 ok( $response->is_error, 'negative response');
 like( $response->status_line, qr/certificate verify failed/, 'ssl verify should fail');
 
+done_testing();
 
