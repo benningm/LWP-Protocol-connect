@@ -34,6 +34,10 @@ sub new {
         }
         die($status);
     }
+# HACK: If IO::Socket::SSL uses IO::Socket::INET6, some method fails for IPv4 hosts because socket domain is considered as AF_INET6,
+#       like "Bad arg length for Socket6::unpack_sockaddr_in6, length is 16, should be 28".
+#       $args{Domain} is not used for setting up socket domain, so force override IO::Socket internal field.
+    ${*$ssl}{'io_socket_domain'} = ${*$conn}{'io_socket_domain'} if exists ${*$conn}{'io_socket_domain'};
     $ssl->http_configure( \%args );
     return $ssl;
 }
