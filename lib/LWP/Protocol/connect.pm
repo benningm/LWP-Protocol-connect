@@ -25,6 +25,7 @@ sub request {
     $protocol->{proxy_connect_opts} = [
     	ProxyAddr => $proxy->host,
 	ProxyPort => $proxy->port,
+	ProxyUserinfo => $proxy->userinfo,
     ];
 
     $protocol->request($request, undef, $arg, $size, $timeout);
