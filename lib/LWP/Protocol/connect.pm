@@ -49,6 +49,21 @@ LWP::Protocol::connect - Provides HTTP/CONNECT proxy support for LWP::UserAgent
 
   $ua->get('https://www.somesslsite.com');
 
+=head1 Proxy Authentication
+
+If you pass the authentication within the userinfo string of the proxy url
+a Basic authentication header will always be generated and sent to the proxy.
+
+  $ua->proxy('https', 'connect://user:pw@proxyhost.domain:3128');
+
+The more general way is to add the credentials of the proxy to the $ua object.
+
+  $ua->credentials("localhost:3128", "Squid proxy-caching web server", "user", "pw");
+
+In this case the first request to the proxy will fail with a "407 Proxy Auth. Required".
+This will cause LWP::UserAgent to choose the right LWP::Authen::<method> module to
+add the authentication and retry.
+
 =head1 DESCRIPTION
 
 The LWP::Protocol::connect module provides support for using https over
