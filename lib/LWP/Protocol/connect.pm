@@ -26,6 +26,7 @@ sub request {
     	ProxyAddr => $proxy->host,
 	ProxyPort => $proxy->port,
 	ProxyUserinfo => $proxy->userinfo,
+	Agent => $self->{ua},
     ];
 
     $protocol->request($request, undef, $arg, $size, $timeout);

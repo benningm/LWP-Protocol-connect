@@ -12,14 +12,15 @@ use HTTP::Request;
 sub new {
     my $class = shift;
     my %args = @_;
-    my $agent = LWP::UserAgent->new(keep_alive => 1);
+    my $agent = $args{Agent};
     my ($user, $pass);
     if( defined $args{ProxyUserinfo} ) {
          ($user, $pass) = split(':', URI::Escape::uri_unescape( $args{ProxyUserinfo} ), 2);
     }
     my $proxy_host_port =  $args{'ProxyAddr'}.':'.$args{'ProxyPort'};
-    $agent->proxy( http => 'http://'.$proxy_host_port.'/' );
-    $agent->credentials( $proxy_host_port , undef, $user, $pass );
+    $agent->proxy( http => 'http://'.
+	    ( defined $user ? $user.':'.$pass.'@' : '' ).
+	    $proxy_host_port.'/' );
 
     my $host_port = $args{PeerAddr}.":".$args{PeerPort};
     my $host = 'http://'.$host_port;
@@ -33,6 +34,7 @@ sub new {
     delete $args{ProxyAddr};
     delete $args{ProxyPort};
     delete $args{ProxyUserinfo};
+    delete $args{Agent};
 
     my $ssl = $class->new_from_fd($conn, %args);
     if( ! $ssl ) {
