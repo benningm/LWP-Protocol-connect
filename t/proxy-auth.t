@@ -8,6 +8,7 @@ BEGIN { $ENV{LANG} = $ENV{LC_MESSAGES} = $ENV{LC_ALL} = "C" }
 use Test::More;
 use Test::Exception;
 
+use version;
 use LWP::UserAgent;
 
 my $lwp = LWP::UserAgent->new();
@@ -37,15 +38,20 @@ ok( $response->is_success, 'positive response');
 if( $response->is_error) {
 	diag('request failed with: '.$response->status_line);
 }
-# TEST with auth thru ->credentials
-$lwp = LWP::UserAgent->new();
-lives_ok { $lwp->proxy('https', 'connect://localhost:3128/') } 'can set connect:// proxy';
-lives_ok { $lwp->credentials("localhost:3128", "Squid proxy-caching web server", "testuser", "testpw") } 'set credentials';
-lives_ok { $response = $lwp->get('https://www.google.com/') } 'GET https://www.google.com/';
 
-ok( $response->is_success, 'positive response');
-if( $response->is_error) {
-	diag('request failed with: '.$response->status_line);
+# TEST with auth thru ->credentials
+# does not work with current LWP::Authen::Basic
+# retry when a new version is released
+if( version->parse($LWP::UserAgent::VERSION) > version->parse('6.05') ) {
+	$lwp = LWP::UserAgent->new();
+	lives_ok { $lwp->proxy('https', 'connect://localhost:3128/') } 'can set connect:// proxy';
+	lives_ok { $lwp->credentials("localhost:3128", "Squid proxy-caching web server", "testuser", "testpw") } 'set credentials';
+	lives_ok { $response = $lwp->get('https://www.google.com/') } 'GET https://www.google.com/';
+
+	ok( $response->is_success, 'positive response');
+	if( $response->is_error) {
+		diag('request failed with: '.$response->status_line);
+	}
 }
 
 done_testing();
