@@ -1,8 +1,5 @@
 package LWP::Protocol::connect;
 
-use LWP::Protocol::https::connect;
-use LWP::Protocol::https::connect::Socket;
-
 use warnings;
 use strict;
 
@@ -10,6 +7,8 @@ use strict;
 
 require LWP::Protocol;
 our @ISA = qw(LWP::Protocol);
+
+our @supported_schemes = ( 'https', 'http' );
 
 sub request {
     my($self, $request, $proxy, $arg, $size, $timeout) = @_;
@@ -21,7 +20,23 @@ sub request {
 		    'HTTP/CONNECT method protocol schema can only be used with a proxy!');
     }
 
-    my $protocol = LWP::Protocol::create("$scheme\::connect", $self->{ua});
+    if( ! grep { $scheme eq $_ } @supported_schemes ) {
+	    return HTTP::Response->new( &HTTP::Status::RC_BAD_REQUEST,
+		    $scheme.' protocol scheme is not supported by '. __PACKAGE__ );
+    }
+
+    my $connect_scheme = $scheme."::connect";
+    my $socket_scheme = $connect_scheme."::Socket";
+
+    for my $scheme ( $connect_scheme, $socket_scheme ) {
+        eval 'require LWP::Protocol::'.$scheme; ## no critic
+	if( $@ ) {
+	    return HTTP::Response->new( &HTTP::Status::RC_BAD_REQUEST,
+		    'could not load '.$connect_scheme.' protocol support: '.$@);
+	}
+    }
+
+    my $protocol = LWP::Protocol::create($connect_scheme, $self->{ua});
     $protocol->{proxy_connect_opts} = [
     	ProxyAddr => $proxy->host,
 	ProxyPort => $proxy->port,
