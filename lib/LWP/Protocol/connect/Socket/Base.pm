@@ -12,7 +12,8 @@ sub new {
     my $class = shift;
     my %args = @_;
     my $conn = $class->_proxy_connect( \%args );
-
+    bless $conn, $class;
+    
     $conn->http_configure( \%args );
     return $conn;
 }
@@ -25,16 +26,19 @@ sub _proxy_connect {
          ($user, $pass) = split(':', URI::Escape::uri_unescape( $args->{ProxyUserinfo} ), 2);
     }
     my $proxy_host_port =  $args->{'ProxyAddr'}.':'.$args->{'ProxyPort'};
+    my $cur_http_proxy = $agent->proxy('http');
     $agent->proxy( http => 'http://'.
-	    ( defined $user ? $user.':'.$pass.'@' : '' ).
-	    $proxy_host_port.'/' );
+        ( defined $user ? $user.':'.$pass.'@' : '' ).
+        $proxy_host_port.'/' );
 
     my $host_port = $args->{PeerAddr}.":".$args->{PeerPort};
     my $host = 'http://'.$host_port;
     my $request = HTTP::Request->new( CONNECT => $host );
     my $response = $agent->request( $request );
+    $agent->proxy( http => $cur_http_proxy );
+    
     if( $response->is_error ) {
-	    die('error while CONNECT thru proxy: '.$response->status_line );
+        die('error while CONNECT thru proxy: '.$response->status_line );
     }
     my $conn = $response->{client_socket};
 
@@ -51,4 +55,3 @@ sub http_connect {
 }
 
 1;
-
