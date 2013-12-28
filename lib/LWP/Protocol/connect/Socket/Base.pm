@@ -12,7 +12,8 @@ sub new {
     my $class = shift;
     my %args = @_;
     my $conn = $class->_proxy_connect( \%args );
-
+    bless $conn, $class;
+    
     $conn->http_configure( \%args );
     return $conn;
 }
